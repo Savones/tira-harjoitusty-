@@ -1,9 +1,11 @@
 from ui.ui import UI
 from services.logic import Logic
+from services.room_service import RoomService
 
 
 def main():
-    logic = Logic()
+    room_service = RoomService()
+    logic = Logic(room_service)
     app = UI(logic)
 
     app.start()
