@@ -1,7 +1,7 @@
 import pygame
 
 
-class UI():
+class UI:
     def __init__(self, logic) -> None:
         self.logic = logic
         self.screen = pygame.display.set_mode([800, 900])
@@ -21,7 +21,8 @@ class UI():
                     if pygame.Rect(300, 825, 200, 50).collidepoint(event.pos):
                         rooms = self.logic.generate_rooms(20)
                         for room in rooms:
-                            self.create_rect((198, 235, 190), room)
+                            self.create_rect(
+                                (198, 235, 190), (room.x, room.y, room.width, room.height))
 
             self.draw_backgroud()
 
