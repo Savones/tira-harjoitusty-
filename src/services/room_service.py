@@ -1,4 +1,7 @@
 class RoomService:
+    """Huoneiden logiikasta huolehtiva luokka
+    """
+
     def check_overlap(self, checked_room, rooms) -> bool:
         for room in rooms:
             if checked_room.x + checked_room.width > room.x - 50 and checked_room.x < room.x + room.width + 50:

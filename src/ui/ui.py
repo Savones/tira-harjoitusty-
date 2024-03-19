@@ -7,6 +7,9 @@ RED = (219, 50, 77)
 
 
 class UI:
+    """Sovelluksen käyttöliittymästä vastaava luokka
+    """
+
     def __init__(self, logic) -> None:
         self.logic = logic
         self.screen = pygame.display.set_mode([800, 900])

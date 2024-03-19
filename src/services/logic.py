@@ -3,6 +3,12 @@ from random import randrange
 
 
 class Logic:
+    """Luokka sovelluksen yleiselle logiikalle
+
+    Attributes:
+        room_service (RoomService()): Huoneiden logiikasta vastaavan luokan olio
+    """
+
     def __init__(self, room_service) -> None:
         self.room_service = room_service
         self.rooms = []

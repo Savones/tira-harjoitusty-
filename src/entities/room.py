@@ -1,5 +1,14 @@
 class Room:
-    def __init__(self, x, y, width, height) -> None:
+    """Huonetta kuvaava luokka
+
+    Attributes:
+            x (int): Huoneen vasemmanpuolimmaisin x-koordinaatti
+            y (int): Huoneen ylin y-koordinaatti
+            width (int): Huoneen leveys
+            height (int): Huoneen korkeus
+    """
+
+    def __init__(self, x: int, y: int, width: int, height: int) -> None:
         self.x = x
         self.y = y
         self.width = width
