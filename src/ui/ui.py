@@ -14,7 +14,7 @@ class UI:
         self.logic = logic
         self.screen = pygame.display.set_mode([800, 900])
 
-    def start(self):
+    def start(self) -> None:
         pygame.init()
         pygame.display.set_caption('Luolaston generointi työkalu')
         self.screen.fill(WHITE)
@@ -35,16 +35,16 @@ class UI:
             pygame.display.flip()
         pygame.quit()
 
-    def draw_backgroud(self):
+    def draw_backgroud(self) -> None:
         self.create_rect(RED, [0, 800, 800, 100])
         self.create_rect(BLACK, [300, 825, 200, 50])
         self.create_text('Generoi luolasto', WHITE,
                          (312, 838), pygame.font.Font('freesansbold.ttf', 22))
 
-    def create_rect(self, color, position):
+    def create_rect(self, color: tuple, position: list) -> None:
         pygame.draw.rect(self.screen, color, position)
 
-    def create_text(self, text, color, position, font):
+    def create_text(self, text: str, color: tuple, position: list, font) -> None:
         text_rect = font.render(text, True,
                                 color)
         self.screen.blit(text_rect, position)

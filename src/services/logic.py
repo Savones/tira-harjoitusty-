@@ -13,7 +13,7 @@ class Logic:
         self.room_service = room_service
         self.rooms = []
 
-    def generate_rooms(self, amount) -> list:
+    def generate_rooms(self, amount: int) -> list:
         for _ in range(amount):
             while True:
                 room = Room(randrange(50, 740), randrange(50, 740),
