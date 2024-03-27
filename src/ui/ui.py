@@ -32,6 +32,7 @@ class UI:
                             self.create_rect(
                                 GREEN, (room.x, room.y, room.width, room.height))
             self.draw_backgroud()
+
             pygame.display.flip()
         pygame.quit()
 
@@ -48,3 +49,7 @@ class UI:
         text_rect = font.render(text, True,
                                 color)
         self.screen.blit(text_rect, position)
+
+# Kolmio esimerkki:
+# pygame.draw.polygon(self.screen, (0, 255, 255),
+#                     ((25, 75), (320, 125), (250, 375)))
