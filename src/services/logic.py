@@ -33,3 +33,45 @@ class Logic:
             self.room_vertices.append(
                 ((room.x + (room.width // 2), (room.y + (room.height // 2)))))
         return self.room_vertices
+
+    def get_trianglutation(self) -> list:
+        trianglutation = [self.super_triangle]
+        for point in self.room_vertices:
+            bad_triangles = []
+
+            for triangle in trianglutation:
+                if triangle.point_in_circumcycle(point):
+                    bad_triangles.append(triangle)
+
+            polygon = []
+
+            # Rikollisen monta for looppia
+            for triangle in bad_triangles:
+                for edge in triangle.edges:
+                    for triangle2 in bad_triangles:
+                        if edge not in [e for e in triangle2.edges if e not in triangle.edges]:
+                            polygon.append(edge)
+
+            for triangle in bad_triangles:
+                trianglutation.remove(triangle)
+
+            for edge in polygon:
+                trianglutation.append(
+                    Triangle(Vertex(point[0], point[1]), Vertex(edge.edge[0].x, edge.edge[0].y), Vertex(edge.edge[1].x, edge.edge[1].y)))
+
+        new_triangles = []
+        for triangle in trianglutation:
+            has_shared_vertex = False
+            for vertex in triangle.triangle:
+                for supervertex in self.super_triangle.triangle:
+                    if vertex.x == supervertex.x and vertex.y == supervertex.y:
+                        has_shared_vertex = True
+                        break
+                if has_shared_vertex:
+                    break
+            if not has_shared_vertex:
+                new_triangles.append(triangle)
+
+        trianglutation = new_triangles
+
+        return trianglutation
