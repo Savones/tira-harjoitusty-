@@ -72,6 +72,6 @@ class Logic:
             if not has_shared_vertex:
                 new_triangles.append(triangle)
 
-        trianglutation = new_triangles
+        new_triangles
 
-        return trianglutation
+        return trianglutation, new_triangles

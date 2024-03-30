@@ -4,6 +4,7 @@ GREEN = (198, 235, 190)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (219, 50, 77)
+BLUE = (0, 0, 255)
 
 
 class UI:
@@ -27,6 +28,9 @@ class UI:
                     running = False
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if pygame.Rect(500, 925, 200, 50).collidepoint(event.pos):
+                        triangle_vertices = [[0, 898], [599, 0], [1198, 898]]
+                        pygame.draw.polygon(
+                            self.screen, RED, triangle_vertices, 1)
                         rooms = self.logic.generate_rooms(4)
                         room_vertices = self.logic.generate_room_vertices()
                         for room in rooms:
@@ -35,18 +39,20 @@ class UI:
                         for vertex in room_vertices:
                             self.create_circle(BLACK, vertex, 5, 0)
                         triangulation = self.logic.get_trianglutation()
-                        for triangle in triangulation:
+                        for triangle in triangulation[0]:
                             vertices = [(triangle.vertex1.x, triangle.vertex1.y),
                                         (triangle.vertex2.x, triangle.vertex2.y),
                                         (triangle.vertex3.x, triangle.vertex3.y)]
                             pygame.draw.polygon(
-                                self.screen, (0, 0, 0), vertices, 2)
+                                self.screen, RED, vertices, 1)
+                        for triangle in triangulation[1]:
+                            vertices = [(triangle.vertex1.x, triangle.vertex1.y),
+                                        (triangle.vertex2.x, triangle.vertex2.y),
+                                        (triangle.vertex3.x, triangle.vertex3.y)]
+                            pygame.draw.polygon(
+                                self.screen, BLUE, vertices, 3)
 
             self.draw_backgroud()
-
-            triangle_vertices = [[0, 898], [599, 0], [1198, 898]]
-            pygame.draw.polygon(self.screen, (0, 0, 0), triangle_vertices, 2)
-
             pygame.display.flip()
         pygame.quit()
 
