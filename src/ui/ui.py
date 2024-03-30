@@ -12,7 +12,7 @@ class UI:
 
     def __init__(self, logic) -> None:
         self.logic = logic
-        self.screen = pygame.display.set_mode([800, 900])
+        self.screen = pygame.display.set_mode([1200, 1000])
 
     def start(self) -> None:
         pygame.init()
@@ -26,21 +26,35 @@ class UI:
                 if event.type == pygame.QUIT:
                     running = False
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if pygame.Rect(300, 825, 200, 50).collidepoint(event.pos):
-                        rooms = self.logic.generate_rooms(10)
+                    if pygame.Rect(500, 925, 200, 50).collidepoint(event.pos):
+                        rooms = self.logic.generate_rooms(4)
+                        room_vertices = self.logic.generate_room_vertices()
                         for room in rooms:
                             self.create_rect(
                                 GREEN, (room.x, room.y, room.width, room.height))
+                        for vertex in room_vertices:
+                            self.create_circle(BLACK, vertex, 5, 0)
+                        triangulation = self.logic.get_trianglutation()
+                        for triangle in triangulation:
+                            vertices = [(triangle.vertex1.x, triangle.vertex1.y),
+                                        (triangle.vertex2.x, triangle.vertex2.y),
+                                        (triangle.vertex3.x, triangle.vertex3.y)]
+                            pygame.draw.polygon(
+                                self.screen, (0, 0, 0), vertices, 2)
+
             self.draw_backgroud()
+
+            triangle_vertices = [[0, 898], [599, 0], [1198, 898]]
+            pygame.draw.polygon(self.screen, (0, 0, 0), triangle_vertices, 2)
 
             pygame.display.flip()
         pygame.quit()
 
     def draw_backgroud(self) -> None:
-        self.create_rect(RED, [0, 800, 800, 100])
-        self.create_rect(BLACK, [300, 825, 200, 50])
+        self.create_rect(RED, [0, 900, 1200, 100])
+        self.create_rect(BLACK, [500, 925, 200, 50])
         self.create_text('Generoi luolasto', WHITE,
-                         (312, 838), pygame.font.Font('freesansbold.ttf', 22))
+                         (512, 938), pygame.font.Font('freesansbold.ttf', 22))
 
     def create_rect(self, color: tuple, position: list) -> None:
         pygame.draw.rect(self.screen, color, position)
@@ -50,6 +64,5 @@ class UI:
                                 color)
         self.screen.blit(text_rect, position)
 
-# Kolmio esimerkki:
-# pygame.draw.polygon(self.screen, (0, 255, 255),
-#                     ((25, 75), (320, 125), (250, 375)))
+    def create_circle(self, color: tuple, center: tuple, radius: int, filled: int):
+        pygame.draw.circle(self.screen, color, center, radius, filled)
