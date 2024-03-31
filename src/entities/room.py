@@ -13,3 +13,6 @@ class Room:
         self.y = y
         self.width = width
         self.height = height
+
+    def __str__(self):
+        return f"{self.x}, {self.y}, {self.width}, {self.height}"

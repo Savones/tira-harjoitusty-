@@ -1,5 +1,4 @@
 import math
-from entities.edge import Edge
 
 
 class Triangle:
@@ -9,8 +8,13 @@ class Triangle:
         self.vertex3 = vertex3
         self.triangle = [vertex1, vertex2, vertex3]
         self.circum_center = self.get_circum_center()
-        self.edges = [Edge(vertex1, vertex2), Edge(
-            vertex2, vertex3), Edge(vertex1, vertex3)]
+        self.edges = [(vertex1, vertex2), (
+            vertex2, vertex3), (vertex1, vertex3)]
+        self.radius = math.sqrt(
+            (self.vertex1.x - self.circum_center[0])**2 + (self.vertex1.y - self.circum_center[1])**2)
+
+    def __str__(self) -> str:
+        return f"{[str(t) for t in self.triangle]}"
 
     def get_circum_center(self):
         a = self.vertex2.y - self.vertex1.y
@@ -36,7 +40,7 @@ class Triangle:
 
         return [x, y]
 
-    def point_in_circumcycle(self, point):
+    def point_in_circumcircle(self, point):
         distance = math.sqrt(
             (point[0] - self.circum_center[0])**2 + (point[1] - self.circum_center[1])**2)
         vertex_distance = math.sqrt(
