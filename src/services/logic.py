@@ -18,6 +18,10 @@ class Logic:
         self.super_triangle = Triangle(
             Vertex(0, 898), Vertex(599, 0), Vertex(1198, 898))
 
+    def reset(self):
+        self.rooms = []
+        self.room_vertices = []
+
     def generate_rooms(self, amount: int) -> list:
         for _ in range(amount):
             while True:
