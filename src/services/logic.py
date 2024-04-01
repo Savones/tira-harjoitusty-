@@ -30,6 +30,13 @@ class Logic:
                 if self.room_service.check_overlap(room, self.rooms) and self.room_service.check_inside_triangle(room, self.super_triangle):
                     self.rooms.append(room)
                     break
+
+        # Väliaikainen
+        self.rooms = [Room(880, 617, 44, 32), Room(
+            616, 605, 123, 58), Room(295, 815, 40, 76), Room(474, 739, 84, 138)]
+        # self.rooms = [Room(389, 511, 91, 49), Room(
+        #     758, 418, 35, 63), Room(238, 784, 107, 75), Room(611, 243, 86, 124)]
+
         return self.rooms
 
     def generate_room_vertices(self) -> list:
@@ -38,30 +45,45 @@ class Logic:
                 ((room.x + (room.width // 2), (room.y + (room.height // 2)))))
         return self.room_vertices
 
-    def get_trianglutation(self) -> list:
+    def get_triangulation(self) -> list:
         trianglutation = [self.super_triangle]
+
         for point in self.room_vertices:
+            print(f"\nPoint is {point}")
             bad_triangles = []
 
             for triangle in trianglutation:
-                if triangle.point_in_circumcycle(point):
+                print(
+                    f"Triangle in trianglulation: {str(triangle)}, circumcenter {triangle.circum_center}")
+                if triangle.point_in_circumcircle(point):
+                    print(
+                        f"Point in circumcircle")
                     bad_triangles.append(triangle)
 
             polygon = []
 
-            # Rikollisen monta for looppia
-            for triangle in bad_triangles:
-                for edge in triangle.edges:
+            for triangle1 in bad_triangles:
+                for edge in triangle1.edges:
+                    edge_shared = False
                     for triangle2 in bad_triangles:
-                        if edge not in [e for e in triangle2.edges if e not in triangle.edges]:
-                            polygon.append(edge)
+                        if triangle1 is not triangle2 and edge in triangle2.edges:
+                            edge_shared = True
+                            break
+                    if not edge_shared:
+                        polygon.append(edge)
 
             for triangle in bad_triangles:
                 trianglutation.remove(triangle)
 
             for edge in polygon:
-                trianglutation.append(
-                    Triangle(Vertex(point[0], point[1]), Vertex(edge.edge[0].x, edge.edge[0].y), Vertex(edge.edge[1].x, edge.edge[1].y)))
+                vertex1 = Vertex(point[0], point[1])
+                vertex2 = Vertex(edge[0].x, edge[0].y)
+                vertex3 = Vertex(edge[1].x, edge[1].y)
+
+                if {str(vertex1), str(vertex2), str(vertex3)} not in [{str(triangle.vertex1), str(triangle.vertex2), str(triangle.vertex3)} for triangle in trianglutation]:
+                    trianglutation.append(Triangle(vertex1, vertex2, vertex3))
+                    print(
+                        f"Triangle added: {str(Triangle(vertex1, vertex2, vertex3))}")
 
         new_triangles = []
         for triangle in trianglutation:
@@ -76,6 +98,8 @@ class Logic:
             if not has_shared_vertex:
                 new_triangles.append(triangle)
 
-        new_triangles
+        print(len(trianglutation), len(new_triangles))
+        for triangle in new_triangles:
+            print(str(triangle))
 
         return trianglutation, new_triangles
