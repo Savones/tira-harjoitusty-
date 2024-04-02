@@ -1,6 +1,7 @@
 from entities.room import Room
 from entities.vertex import Vertex
 from entities.triangle import Triangle
+from services.triangulation import Triangulation
 from random import randrange
 
 
@@ -31,12 +32,6 @@ class Logic:
                     self.rooms.append(room)
                     break
 
-        #  Väliaikainen
-        # self.rooms = [Room(880, 617, 44, 32), Room(
-        #     616, 605, 123, 58), Room(295, 815, 40, 76), Room(474, 739, 84, 138)]
-        # self.rooms = [Room(389, 511, 91, 49), Room(
-        #     758, 418, 35, 63), Room(238, 784, 107, 75), Room(611, 243, 86, 124)]
-
         return self.rooms
 
     def generate_room_vertices(self) -> list:
@@ -45,68 +40,7 @@ class Logic:
                 ((room.x + (room.width // 2), (room.y + (room.height // 2)))))
         return self.room_vertices
 
-    def get_triangulation(self) -> list:
-        trianglutation = [self.super_triangle]
-
-        for point in self.room_vertices:
-            print(f"\nPoint is {point}")
-            bad_triangles = []
-
-            # Lisää kolmion "huonot kolmiot" listaan, jos piste on kolmion ympyrän sisällä
-            for triangle in trianglutation:
-                print(
-                    f"Triangle in trianglulation: {str(triangle)}, circumcenter {triangle.circum_center}")
-                if triangle.point_in_circumcircle(point):
-                    print(
-                        f"Point in circumcircle")
-                    bad_triangles.append(triangle)
-
-            polygon = []
-
-            # Lisää sivun polygon listaan, jos "huono kolmio" jakaa sivun toisen "huonon kolmion kanssa"
-            for triangle1 in bad_triangles:
-                for edge in triangle1.edges:
-                    edge_shared = False
-                    for triangle2 in bad_triangles:
-                        if triangle1 is not triangle2 and str(edge[0]) in [str(e[0]) for e in triangle2.edges] and str(edge[1]) in [str(e[1]) for e in triangle2.edges]:
-                            edge_shared = True
-                            break
-                    if not edge_shared:
-                        polygon.append(edge)
-
-            # Poistaa huonot kolmiot kolmiointi listasta
-            for triangle in bad_triangles:
-                trianglutation.remove(triangle)
-
-            # Lisää uudet kolmiot kolmiointi listaan. Kolmio muodostuu polygon sivun päätepisteistä ja pisteestä
-            vertex1 = Vertex(point[0], point[1])
-
-            for edge in polygon:
-                print(f"Edge in pogygon: {str(edge[0])}, {str(edge[1])}")
-                vertex2 = Vertex(edge[0].x, edge[0].y)
-                vertex3 = Vertex(edge[1].x, edge[1].y)
-
-                if {str(vertex1), str(vertex2), str(vertex3)} not in [{str(triangle.vertex1), str(triangle.vertex2), str(triangle.vertex3)} for triangle in trianglutation]:
-                    trianglutation.append(Triangle(vertex1, vertex2, vertex3))
-                    print(
-                        f"Triangle added: {str(Triangle(vertex1, vertex2, vertex3))}")
-
-        # Poistaa kolmiot, joilla jaettu kärkipiste superkolmion kanssa
-        new_triangles = []
-        for triangle in trianglutation:
-            has_shared_vertex = False
-            for vertex in triangle.triangle:
-                for supervertex in self.super_triangle.triangle:
-                    if vertex.x == supervertex.x and vertex.y == supervertex.y:
-                        has_shared_vertex = True
-                        break
-                if has_shared_vertex:
-                    break
-            if not has_shared_vertex:
-                new_triangles.append(triangle)
-
-        print(len(trianglutation), len(new_triangles))
-        for triangle in new_triangles:
-            print(str(triangle))
-
-        return trianglutation, new_triangles
+    def get_triangulation(self) -> tuple:
+        triangulation_logic = Triangulation(
+            self.super_triangle, self.room_vertices)
+        return triangulation_logic.get_triangulation()
