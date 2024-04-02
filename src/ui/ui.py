@@ -83,9 +83,9 @@ class UI:
 
     def show_room_vertices(self):
         for vertex in self.room_vertices:
-            self.create_circle(BLACK, vertex, 5, 0)
+            self.create_circle(BLACK, vertex, 3, 0)
             self.create_text(str(vertex), BLACK, vertex, pygame.font.Font(
-                'freesansbold.ttf', 22))
+                'freesansbold.ttf', 18))
 
     def show_triangles(self):
         for triangle in self.triangulation[0]:
