@@ -6,6 +6,9 @@ BLACK = (0, 0, 0)
 RED = (219, 50, 77)
 BLUE = (0, 0, 255)
 
+GENERATE_BUTTON = 500, 925, 200, 50
+STAGES_BUTTON = 200, 925, 200, 50
+
 
 class UI:
     """Sovelluksen käyttöliittymästä vastaava luokka
@@ -19,6 +22,7 @@ class UI:
         self.rooms = []
         self.room_vertices = []
         self.triangulation = []
+        self.room_amount = 15
 
     def start(self) -> None:
         pygame.init()
@@ -33,12 +37,12 @@ class UI:
                     running = False
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if pygame.Rect(500, 925, 200, 50).collidepoint(event.pos):
+                    if pygame.Rect(GENERATE_BUTTON).collidepoint(event.pos):
                         self.handle_generate_click()
                         self.background_reset()
-                        self.show_triangulation()
+                        self.show_mst()
 
-                    if pygame.Rect(200, 925, 200, 50).collidepoint(event.pos) and self.generate_button:
+                    if pygame.Rect(STAGES_BUTTON).collidepoint(event.pos) and self.generate_button:
                         self.triangles_button += 1
                         if self.triangles_button == 1:
                             self.background_reset()
@@ -53,9 +57,18 @@ class UI:
                         elif self.triangles_button == 4:
                             self.show_triangulation()
 
-                        else:
+                        elif self.triangles_button == 5:
                             self.background_reset()
                             self.show_triangulation()
+                            self.show_room_vertices()
+
+                        elif self.triangles_button == 6:
+                            self.show_mst()
+                            self.show_room_vertices()
+
+                        else:
+                            self.background_reset()
+                            self.show_mst()
                             self.triangles_button = 0
 
             self.draw_backgroud()
@@ -64,9 +77,10 @@ class UI:
 
     def handle_generate_click(self):
         self.logic.reset()
-        self.rooms = self.logic.generate_rooms(15)
+        self.rooms = self.logic.generate_rooms(self.room_amount)
         self.room_vertices = self.logic.generate_room_vertices()
         self.triangulation = self.logic.get_triangulation()
+        self.mst = self.logic.get_mst(self.triangulation[1])
 
         self.generate_button = True
         self.triangles_button = 0
@@ -75,6 +89,10 @@ class UI:
         self.screen.fill(WHITE)
         self.draw_backgroud()
         self.show_rooms()
+
+    def show_mst(self):
+        for edge in self.mst:
+            pygame.draw.line(self.screen, RED, edge[0], edge[1], 3)
 
     def show_rooms(self):
         for room in self.rooms:
