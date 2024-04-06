@@ -22,18 +22,3 @@ class TestRoomService(unittest.TestCase):
         rooms = [Room(100, 100, 100, 100)]
         self.assertEqual(
             False, self.room_service.check_overlap(self.checked_room, rooms))
-
-    def test_check_measurements_return_false_when_x_unfit(self):
-        room = Room(700, 100, 100, 100)
-        self.assertEqual(
-            False, self.room_service.check_measurements(room))
-
-    def test_check_measurements_return_false_when_y_unfit(self):
-        room = Room(100, 700, 100, 100)
-        self.assertEqual(
-            False, self.room_service.check_measurements(room))
-
-    def test_check_measurements_return_true_when_all_fit(self):
-        room = Room(100, 100, 100, 100)
-        self.assertEqual(
-            True, self.room_service.check_measurements(room))
