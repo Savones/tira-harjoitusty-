@@ -1,3 +1,4 @@
+from services.mst import Mst
 from entities.room import Room
 from entities.vertex import Vertex
 from entities.triangle import Triangle
@@ -43,4 +44,8 @@ class Logic:
     def get_triangulation(self) -> tuple:
         triangulation_logic = Triangulation(
             self.super_triangle, self.room_vertices)
-        return triangulation_logic.get_triangulation()
+        triangulation, new_triangulation = triangulation_logic.get_triangulation()
+        return triangulation, new_triangulation
+
+    def get_mst(self, triangulation):
+        return Mst(self.room_vertices, triangulation).get_mst()
