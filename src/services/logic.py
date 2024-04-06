@@ -25,6 +25,14 @@ class Logic:
         self.room_vertices = []
 
     def generate_rooms(self, amount: int) -> list:
+        """Generoi huoneet
+
+        Args:
+            amount (int): Generoitavien huoneiden määrä
+
+        Returns:
+            list: Lista Room olioita
+        """
         for _ in range(amount):
             while True:
                 room = Room(randrange(0, 1200), randrange(0, 900),
@@ -36,16 +44,34 @@ class Logic:
         return self.rooms
 
     def generate_room_vertices(self) -> list:
+        """Määrittää huoneiden keskipisteet
+
+        Returns:
+            list: Lista huoneiden keskipisteiden koordinaatteja tupleina
+        """
         for room in self.rooms:
             self.room_vertices.append(
                 ((room.x + (room.width // 2), (room.y + (room.height // 2)))))
         return self.room_vertices
 
     def get_triangulation(self) -> tuple:
+        """Suorittaa kolmioinnin
+
+        Returns:
+            tuple: Kaksi kolmiointia kuvaavaa listaa tuplena, joista 2. lopullinen
+        """
         triangulation_logic = Triangulation(
             self.super_triangle, self.room_vertices)
         triangulation, new_triangulation = triangulation_logic.get_triangulation()
         return triangulation, new_triangulation
 
-    def get_mst(self, triangulation):
+    def get_mst(self, triangulation: list):
+        """Laskee huoneille pienimmän virittävän puun
+
+        Args:
+            triangulation (list): Kolmiointia kuvaava lista Triangle olioita
+
+        Returns:
+            list: Pienintä virittävää puuta kuvaava lista
+        """
         return Mst(self.room_vertices, triangulation).get_mst()

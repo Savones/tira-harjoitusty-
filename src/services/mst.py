@@ -9,13 +9,13 @@ class Mst:
         triangulation (list): Lista kolmioinnin muodostavia kolmio-olioita
     """
 
-    def __init__(self, room_vertices, triangulation):
+    def __init__(self, room_vertices: list, triangulation: list):
         self.room_vertices = room_vertices
         self.triangulation = triangulation
         self.graph = []
         self.room_amount = len(room_vertices)
 
-    def get_mst(self):
+    def get_mst(self) -> list:
         graph = self.create_graph()
         distance = [10000] * self.room_amount
         parent = [None] * self.room_amount
@@ -35,13 +35,18 @@ class Mst:
 
         return self.get_mst_edges(parent)
 
-    def calculate_distance(self, vertex1, vertex2):
+    def calculate_distance(self, vertex1, vertex2) -> float:
         x1, y1 = vertex1.x, vertex1.y
         x2, y2 = vertex2.x, vertex2.y
         distance = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
         return distance
 
-    def create_graph(self):
+    def create_graph(self) -> list:
+        """Luo luolastoa kuvaavan puu tietorakenteen
+
+        Returns:
+            list: Huoneiden välisiä käytäviä ja niiden etäisyyksiä kuvaava lista
+        """
         edges = {}
         for triangle in self.triangulation:
             for edge in triangle.edges:
@@ -62,15 +67,15 @@ class Mst:
 
         return graph
 
-    def get_min_index(self, distanse, visited):
+    def get_min_index(self, distance: list, visited: list) -> int:
         min = 10000
         for vertex_index in range(self.room_amount):
-            if distanse[vertex_index] < min and visited[vertex_index] == False:
-                min = distanse[vertex_index]
+            if distance[vertex_index] < min and visited[vertex_index] == False:
+                min = distance[vertex_index]
                 min_index = vertex_index
         return min_index
 
-    def get_mst_edges(self, parent):
+    def get_mst_edges(self, parent: list) -> list:
         help_dict = {}
         mst_edges = []
 

@@ -10,12 +10,12 @@ class Triangulation:
         room_vertices (list): lista huoneiden keskipisteitä
     """
 
-    def __init__(self, super_triangle, room_vertices):
+    def __init__(self, super_triangle, room_vertices: list):
         self.super_triangle = super_triangle
         self.room_vertices = room_vertices
         self.triangulation = [self.super_triangle]
 
-    def get_triangulation(self):
+    def get_triangulation(self) -> tuple:
         for point in self.room_vertices:
             bad_triangles = self.get_bad_triangles(point)
             polygon = self.get_polygon(bad_triangles)
@@ -29,14 +29,14 @@ class Triangulation:
 
         return self.triangulation, new_triangles
 
-    def get_bad_triangles(self, point):
+    def get_bad_triangles(self, point: tuple) -> list:
         bad_triangles = []
         for triangle in self.triangulation:
             if triangle.point_in_circumcircle(point):
                 bad_triangles.append(triangle)
         return bad_triangles
 
-    def get_polygon(self, bad_triangles):
+    def get_polygon(self, bad_triangles: list) -> list:
         polygon = []
         for triangle1 in bad_triangles:
             for edge in triangle1.edges:
