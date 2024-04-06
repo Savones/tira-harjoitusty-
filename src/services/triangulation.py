@@ -3,6 +3,13 @@ from entities.triangle import Triangle
 
 
 class Triangulation:
+    """Luokka kolmionnille
+
+    Attributes:
+        super_triangle: Triangle luokan olio
+        room_vertices (list): lista huoneiden keskipisteitä
+    """
+
     def __init__(self, super_triangle, room_vertices):
         self.super_triangle = super_triangle
         self.room_vertices = room_vertices
@@ -53,8 +60,10 @@ class Triangulation:
         for edge in polygon:
             vertex2 = Vertex(edge[0].x, edge[0].y)
             vertex3 = Vertex(edge[1].x, edge[1].y)
+            vertices = [{str(triangle.vertex1), str(triangle.vertex2), str(
+                triangle.vertex3)} for triangle in self.triangulation]
 
-            if {str(vertex1), str(vertex2), str(vertex3)} not in [{str(triangle.vertex1), str(triangle.vertex2), str(triangle.vertex3)} for triangle in self.triangulation]:
+            if {str(vertex1), str(vertex2), str(vertex3)} not in vertices:
                 self.triangulation.append(
                     Triangle(vertex1, vertex2, vertex3))
 

@@ -2,6 +2,14 @@ import math
 
 
 class Triangle:
+    """Kolmiota kuvaava luokka
+
+    Attributes:
+        vertex1: Vertex luokan olio
+        vertex2: Vertex luokan olio
+        vertex3: Vertex luokan olio
+    """
+
     def __init__(self, vertex1, vertex2, vertex3):
         self.vertex1 = vertex1
         self.vertex2 = vertex2

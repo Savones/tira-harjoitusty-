@@ -12,6 +12,9 @@ STAGES_BUTTON = 200, 925, 200, 50
 
 class UI:
     """Sovelluksen käyttöliittymästä vastaava luokka
+
+    Attributes:
+        logic: Logic luokan olio
     """
 
     def __init__(self, logic) -> None:

@@ -2,6 +2,13 @@ import math
 
 
 class Mst:
+    """Luokka pienimmälle virittävälle puulle
+
+    Attributes:
+        room_vertices (list): Lista huoneiden keskipisteitä
+        triangulation (list): Lista kolmioinnin muodostavia kolmio-olioita
+    """
+
     def __init__(self, room_vertices, triangulation):
         self.room_vertices = room_vertices
         self.triangulation = triangulation
