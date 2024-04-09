@@ -19,10 +19,16 @@ class Logic:
         self.room_vertices = []
         self.super_triangle = Triangle(
             Vertex(0, 898), Vertex(599, 0), Vertex(1198, 898))
+        self.triangulation = []
+        self.mst = []
+        self.chosen_edges = []
 
     def reset(self):
         self.rooms = []
         self.room_vertices = []
+        self.triangulation = []
+        self.mst = []
+        self.chosen_edges = []
 
     def generate_rooms(self, amount: int) -> list:
         """Generoi huoneet
@@ -62,8 +68,8 @@ class Logic:
         """
         triangulation_logic = Triangulation(
             self.super_triangle, self.room_vertices)
-        triangulation, new_triangulation = triangulation_logic.get_triangulation()
-        return triangulation, new_triangulation
+        all_triangulation, self.triangulation = triangulation_logic.get_triangulation()
+        return all_triangulation, self.triangulation
 
     def get_mst(self, triangulation: list):
         """Laskee huoneille pienimmän virittävän puun
@@ -74,4 +80,23 @@ class Logic:
         Returns:
             list: Pienintä virittävää puuta kuvaava lista
         """
-        return Mst(self.room_vertices, triangulation).get_mst()
+        self.mst = Mst(self.room_vertices, triangulation).get_mst()
+        return self.mst
+
+    def get_chosen_edges(self):
+        self.chosen_edges = self.mst[:]
+
+        edges = []
+        for triangle in self.triangulation:
+            for edge in triangle.edges:
+                edge_tuple = [(edge[0].x, edge[0].y), (edge[1].x, edge[1].y)]
+                if edge_tuple not in edges and edge_tuple[::-1] not in edges:
+                    if edge_tuple not in self.mst and edge_tuple[::-1] not in self.mst:
+                        edges.append(edge_tuple)
+
+        for edge in edges:
+            ticket = randrange(1, 10)
+            if ticket > 8:
+                self.chosen_edges.append(edge)
+
+        return self.chosen_edges
