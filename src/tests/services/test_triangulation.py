@@ -1,5 +1,3 @@
-from entities.vertex import Vertex
-from entities.triangle import Triangle
 import unittest
 from services.triangulation import Triangulation
 from services.logic import Logic
