@@ -5,6 +5,7 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (219, 50, 77)
 BLUE = (0, 0, 255)
+ORANGE = (255, 140, 0)
 
 GENERATE_BUTTON = 500, 925, 200, 50
 STAGES_BUTTON = 200, 925, 200, 50
@@ -25,7 +26,8 @@ class UI:
         self.rooms = []
         self.room_vertices = []
         self.triangulation = []
-        self.room_amount = 15
+        self.chosen_edges = []
+        self.room_amount = 20
 
     def start(self) -> None:
         pygame.init()
@@ -44,6 +46,7 @@ class UI:
                         self.handle_generate_click()
                         self.background_reset()
                         self.show_mst()
+                        self.show_chosen_edges()
 
                     if pygame.Rect(STAGES_BUTTON).collidepoint(event.pos) and self.generate_button:
                         self.triangles_button += 1
@@ -69,9 +72,13 @@ class UI:
                             self.show_mst()
                             self.show_room_vertices()
 
-                        else:
+                        elif self.triangles_button == 7:
                             self.background_reset()
                             self.show_mst()
+
+                        else:
+                            self.background_reset()
+                            self.show_chosen_edges()
                             self.triangles_button = 0
 
             self.draw_backgroud()
@@ -85,6 +92,8 @@ class UI:
         self.triangulation = self.logic.get_triangulation()
         self.mst = self.logic.get_mst(self.triangulation[1])
 
+        self.chosen_edges = self.logic.get_chosen_edges()
+
         self.generate_button = True
         self.triangles_button = 0
 
@@ -92,6 +101,10 @@ class UI:
         self.screen.fill(WHITE)
         self.draw_backgroud()
         self.show_rooms()
+
+    def show_chosen_edges(self):
+        for edge in self.chosen_edges:
+            pygame.draw.line(self.screen, ORANGE, edge[0], edge[1], 3)
 
     def show_mst(self):
         for edge in self.mst:
