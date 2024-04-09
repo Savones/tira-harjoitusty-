@@ -71,7 +71,7 @@ class Logic:
         all_triangulation, self.triangulation = triangulation_logic.get_triangulation()
         return all_triangulation, self.triangulation
 
-    def get_mst(self, triangulation: list):
+    def get_mst(self, triangulation: list) -> list:
         """Laskee huoneille pienimmän virittävän puun
 
         Args:
@@ -83,9 +83,13 @@ class Logic:
         self.mst = Mst(self.room_vertices, triangulation).get_mst()
         return self.mst
 
-    def get_chosen_edges(self):
-        self.chosen_edges = self.mst[:]
+    def get_chosen_edges(self) -> list:
+        """Lisää arpomalla osan kolmioinnin käytävistä mst käytäviin
 
+        Returns:
+            list: Lista lopullisia käytäviä 
+        """
+        self.chosen_edges = self.mst[:]
         edges = []
         for triangle in self.triangulation:
             for edge in triangle.edges:
