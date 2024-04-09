@@ -69,6 +69,7 @@ class Mst:
 
     def get_min_index(self, distance: list, visited: list) -> int:
         min = 10000
+        min_index = -1
         for vertex_index in range(self.room_amount):
             if distance[vertex_index] < min and visited[vertex_index] == False:
                 min = distance[vertex_index]
