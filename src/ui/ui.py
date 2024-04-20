@@ -23,11 +23,8 @@ class UI:
         self.screen = pygame.display.set_mode([1200, 1000])
         self.triangles_button = 0
         self.generate_button = False
-        self.rooms = []
-        self.room_vertices = []
-        self.triangulation = []
-        self.chosen_edges = []
-        self.room_amount = 20
+        self.rooms, self.room_vertices, self.triangulation, self.chosen_edges = [], [], [], []
+        self.room_amount = 5
 
     def start(self) -> None:
         pygame.init()
@@ -36,50 +33,14 @@ class UI:
 
         running = True
         while running:
-
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if pygame.Rect(GENERATE_BUTTON).collidepoint(event.pos):
                         self.handle_generate_click()
-                        self.background_reset()
-                        self.show_mst()
-                        self.show_chosen_edges()
-
                     if pygame.Rect(STAGES_BUTTON).collidepoint(event.pos) and self.generate_button:
-                        self.triangles_button += 1
-                        if self.triangles_button == 1:
-                            self.background_reset()
-                            self.show_room_vertices()
-
-                        elif self.triangles_button == 2:
-                            self.show_triangles()
-
-                        elif self.triangles_button == 3:
-                            self.show_circles()
-
-                        elif self.triangles_button == 4:
-                            self.show_triangulation()
-
-                        elif self.triangles_button == 5:
-                            self.background_reset()
-                            self.show_triangulation()
-                            self.show_room_vertices()
-
-                        elif self.triangles_button == 6:
-                            self.show_mst()
-                            self.show_room_vertices()
-
-                        elif self.triangles_button == 7:
-                            self.background_reset()
-                            self.show_mst()
-
-                        else:
-                            self.background_reset()
-                            self.show_chosen_edges()
-                            self.triangles_button = 0
+                        self.handle_show_stages_click()
 
             self.draw_backgroud()
             pygame.display.flip()
@@ -91,11 +52,44 @@ class UI:
         self.room_vertices = self.logic.generate_room_vertices()
         self.triangulation = self.logic.get_triangulation()
         self.mst = self.logic.get_mst(self.triangulation[1])
-
         self.chosen_edges = self.logic.get_chosen_edges()
 
         self.generate_button = True
         self.triangles_button = 0
+
+        self.background_reset()
+        self.show_mst()
+        self.show_chosen_edges()
+
+    def handle_show_stages_click(self):
+        self.triangles_button += 1
+        if self.triangles_button == 1:
+            self.background_reset()
+
+        elif self.triangles_button == 2:
+            self.show_triangles()
+
+        elif self.triangles_button == 3:
+            self.show_circles()
+
+        elif self.triangles_button == 4:
+            self.show_triangulation()
+
+        elif self.triangles_button == 5:
+            self.background_reset()
+            self.show_triangulation()
+
+        elif self.triangles_button == 6:
+            self.show_mst()
+
+        elif self.triangles_button == 7:
+            self.background_reset()
+            self.show_mst()
+
+        else:
+            self.background_reset()
+            self.show_chosen_edges()
+            self.triangles_button = 0
 
     def background_reset(self):
         self.screen.fill(WHITE)
