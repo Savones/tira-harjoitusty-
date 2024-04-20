@@ -36,6 +36,17 @@ class RoomService:
                 return False
         return True
 
+    def check_room_in_rect(self, room):
+        if room.x + room.width >= 1200:
+            return False
+        if room.x <= 0:
+            return False
+        if room.y + room.height >= 900:
+            return False
+        if room.y <= 0:
+            return False
+        return True
+
     def check_point_inside_triangle(self, point: tuple, triangle) -> bool:
         def sign(p1, p2, p3):
             return (p1[0] - p3[0]) * (p2[1] - p3[1]) - (p2[0] - p3[0]) * (p1[1] - p3[1])

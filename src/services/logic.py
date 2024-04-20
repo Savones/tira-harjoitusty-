@@ -18,7 +18,7 @@ class Logic:
         self.rooms = []
         self.room_vertices = []
         self.super_triangle = Triangle(
-            Vertex(0, 898), Vertex(599, 0), Vertex(1198, 898))
+            Vertex(-2000, 900), Vertex(599, -500), Vertex(3200, 900))
         self.triangulation = []
         self.mst = []
         self.chosen_edges = []
@@ -43,7 +43,7 @@ class Logic:
             while True:
                 room = Room(randrange(0, 1200), randrange(0, 900),
                             randrange(10, 150), randrange(10, 150))
-                if self.room_service.check_overlap(room, self.rooms) and self.room_service.check_inside_triangle(room, self.super_triangle):
+                if self.room_service.check_overlap(room, self.rooms) and self.room_service.check_room_in_rect(room):
                     self.rooms.append(room)
                     break
 
@@ -103,4 +103,5 @@ class Logic:
             if ticket > 8:
                 self.chosen_edges.append(edge)
 
+        print(self.chosen_edges)
         return self.chosen_edges
