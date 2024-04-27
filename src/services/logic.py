@@ -57,7 +57,7 @@ class Logic:
         """
         for room in self.rooms:
             self.room_vertices.append(
-                ((room.x + (room.width // 2), (room.y + (room.height // 2)))))
+                room.vertex)
         return self.room_vertices
 
     def get_triangulation(self) -> tuple:

@@ -13,6 +13,7 @@ class Room:
         self.y = y
         self.width = width
         self.height = height
+        self.vertex = (x + (width // 2), (y + (height // 2)))
 
     def __str__(self):
         return f"{self.x}, {self.y}, {self.width}, {self.height}"
