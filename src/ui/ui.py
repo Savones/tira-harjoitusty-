@@ -23,8 +23,8 @@ class UI:
         self.screen = pygame.display.set_mode([1200, 1000])
         self.triangles_button = 0
         self.generate_button = False
-        self.rooms, self.room_vertices, self.triangulation, self.chosen_edges = [], [], [], []
-        self.room_amount = 5
+        self.rooms, self.room_vertices, self.triangulation, self.chosen_edges, self.a_star_paths = [], [], [], [], []
+        self.room_amount = 10
 
     def start(self) -> None:
         pygame.init()
@@ -53,13 +53,14 @@ class UI:
         self.triangulation = self.logic.get_triangulation()
         self.mst = self.logic.get_mst(self.triangulation[1])
         self.chosen_edges = self.logic.get_chosen_edges()
+        self.a_star_paths = self.logic.get_a_star_paths()
 
         self.generate_button = True
         self.triangles_button = 0
 
         self.background_reset()
-        self.show_mst()
-        self.show_chosen_edges()
+        self.show_a_star_paths()
+        self.show_rooms()
 
     def handle_show_stages_click(self):
         self.triangles_button += 1
@@ -86,9 +87,14 @@ class UI:
             self.background_reset()
             self.show_mst()
 
-        else:
+        elif self.triangles_button == 8:
             self.background_reset()
             self.show_chosen_edges()
+
+        else:
+            self.background_reset()
+            self.show_a_star_paths()
+            self.show_rooms()
             self.triangles_button = 0
 
     def background_reset(self):
@@ -133,6 +139,12 @@ class UI:
         for triangle in self.triangulation[0]:
             self.create_circle(
                 BLACK, triangle.circum_center, triangle.radius, 1)
+
+    def show_a_star_paths(self):
+        for path in self.a_star_paths:
+            for point in path:
+                self.create_rect(
+                    RED, [point[0], point[1], 5, 5])
 
     def draw_backgroud(self) -> None:
         self.create_rect(RED, [0, 900, 1200, 100])

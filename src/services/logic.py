@@ -3,6 +3,7 @@ from entities.room import Room
 from entities.vertex import Vertex
 from entities.triangle import Triangle
 from services.triangulation import Triangulation
+from services.a_star import Astar
 from random import randrange
 
 
@@ -103,5 +104,20 @@ class Logic:
             if ticket > 8:
                 self.chosen_edges.append(edge)
 
-        print(self.chosen_edges)
         return self.chosen_edges
+
+    def get_a_star_paths(self) -> list:
+
+        room_paths = []
+        p = []
+        for path in self.chosen_edges:
+            for vertex in path:
+                for room in self.rooms:
+                    if room.vertex == vertex:
+                        p.append(room)
+            room_paths.append([p[0], p[1]])
+            p = []
+
+        a_star = Astar()
+        paths = a_star.get_astar_paths(room_paths, self.rooms)
+        return paths
