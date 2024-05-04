@@ -37,13 +37,13 @@ class RoomService:
         return True
 
     def check_room_in_rect(self, room):
-        if room.x + room.width >= 1200:
+        if room.x + room.width >= 1150:
             return False
-        if room.x <= 0:
+        if room.x <= 50:
             return False
-        if room.y + room.height >= 900:
+        if room.y + room.height >= 850:
             return False
-        if room.y <= 0:
+        if room.y <= 50:
             return False
         return True
 
