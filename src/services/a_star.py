@@ -1,18 +1,9 @@
 from queue import PriorityQueue
 
 
-class Node:
-    def __init__(self, position):
-        self.f = 0
-        self.position = position
-
-    def __eq__(self, other):
-        return self.position == other.position
-
-
 class Astar:
     def __init__(self):
-        self.maze = [[10] * 900 for _ in range(1200)]
+        self.maze = [[50] * 900 for _ in range(1200)]
 
     def add_rooms_to_maze(self, room_list: list):
         """Lisää huoneisiin seinät, joiden läpi käytävät eivät voi kulkea
@@ -21,24 +12,31 @@ class Astar:
             room_list (list): Huoneet listana
         """
         for room in room_list:
-            door_1 = room.x + room.width // 2
-            door_2 = room.y + room.height // 2
+            width = room.width
+            height = room.height
+            x = room.x
+            y = room.y
 
-            for i in range(room.width - 10, room.width + 10):
-                if i == (room.width // 2):
-                    self.maze[door_1][room.y] = 0
-                    self.maze[door_1][room.y + (room.height - 1)] = 0
-                    continue
-                self.maze[room.x + i][room.y] = 100
-                self.maze[room.x + i][room.y + (room.height - 1)] = 100
+            door_1 = x + (width // 2)
+            door_2 = y + (height // 2)
 
-            for j in range(room.height - 10, room.height + 10):
-                if j == (room.height // 2):
-                    self.maze[room.x][door_2] = 0
-                    self.maze[room.x + (room.width - 1)][door_2] = 0
+            # for i in range(room.width - 10, room.width + 10):
+            for i in range(width):
+                if i == (width // 2):
+                    self.maze[door_1][y] = 0
+                    self.maze[door_1][y + (height - 1)] = 0
                     continue
-                self.maze[room.x][room.y + j] = 100
-                self.maze[room.x + (room.width - 1)][room.y + j] = 100
+                self.maze[x + i][y] = 100
+                self.maze[x + i][y + (height - 1)] = 100
+
+            # for j in range(room.height - 10, room.height + 10):
+            for j in range(height):
+                if j == (height // 2):
+                    self.maze[x][door_2] = 0
+                    self.maze[x + (width - 1)][door_2] = 0
+                    continue
+                self.maze[x][y + j] = 100
+                self.maze[x + (width - 1)][y + j] = 100
 
     def get_astar_paths(self, paths, room_list):
         self.add_rooms_to_maze(room_list)
