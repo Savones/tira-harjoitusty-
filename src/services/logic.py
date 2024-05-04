@@ -43,7 +43,7 @@ class Logic:
         for _ in range(amount):
             while True:
                 room = Room(randrange(0, 1200), randrange(0, 900),
-                            randrange(10, 150), randrange(10, 150))
+                            randrange(20, 150), randrange(20, 150))
                 if self.room_service.check_overlap(room, self.rooms) and self.room_service.check_room_in_rect(room):
                     self.rooms.append(room)
                     break
