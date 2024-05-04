@@ -9,6 +9,11 @@ ORANGE = (255, 140, 0)
 
 GENERATE_BUTTON = 500, 925, 200, 50
 STAGES_BUTTON = 200, 925, 200, 50
+FIVE_BUTTON = 800, 925, 50, 50
+TEN_BUTTON = 860, 925, 50, 50
+TWENTY_BUTTON = 920, 925, 50, 50
+THIRTY_BUTTON = 980, 925, 50, 50
+FORTY_BUTTON = 1040, 925, 50, 50
 
 
 class UI:
@@ -24,7 +29,8 @@ class UI:
         self.triangles_button = 0
         self.generate_button = False
         self.rooms, self.room_vertices, self.triangulation, self.chosen_edges, self.a_star_paths = [], [], [], [], []
-        self.room_amount = 10
+        self.room_amount = 5
+        self.changed_amount = ('5', FIVE_BUTTON)
 
     def start(self) -> None:
         pygame.init()
@@ -42,9 +48,31 @@ class UI:
                     if pygame.Rect(STAGES_BUTTON).collidepoint(event.pos) and self.generate_button:
                         self.handle_show_stages_click()
 
+                    if pygame.Rect(FIVE_BUTTON).collidepoint(event.pos):
+                        self.room_amount = 5
+                        self.changed_amount = ('5', FIVE_BUTTON)
+                    if pygame.Rect(TEN_BUTTON).collidepoint(event.pos):
+                        self.room_amount = 10
+                        self.changed_amount = ('10', TEN_BUTTON)
+                    if pygame.Rect(TWENTY_BUTTON).collidepoint(event.pos):
+                        self.room_amount = 20
+                        self.changed_amount = ('20', TWENTY_BUTTON)
+                    if pygame.Rect(THIRTY_BUTTON).collidepoint(event.pos):
+                        self.room_amount = 30
+                        self.changed_amount = ('30', THIRTY_BUTTON)
+                    if pygame.Rect(FORTY_BUTTON).collidepoint(event.pos):
+                        self.room_amount = 40
+                        self.changed_amount = ('40', FORTY_BUTTON)
+
             self.draw_backgroud()
             pygame.display.flip()
         pygame.quit()
+
+    def handle_amount_click(self):
+        self.draw_amount_buttons()
+        self.create_rect(BLACK, self.changed_amount[1])
+        self.create_text(self.changed_amount[0], WHITE,
+                         (self.changed_amount[1][0] + 15, 938), pygame.font.Font('freesansbold.ttf', 22))
 
     def handle_generate_click(self):
         self.logic.reset()
@@ -146,9 +174,30 @@ class UI:
                 self.create_rect(
                     RED, [point[0], point[1], 5, 5])
 
+    def draw_amount_buttons(self):
+        self.create_rect(WHITE, [800, 925, 50, 50])
+        self.create_rect(WHITE, [860, 925, 50, 50])
+        self.create_rect(WHITE, [920, 925, 50, 50])
+        self.create_rect(WHITE, [980, 925, 50, 50])
+        self.create_rect(WHITE, [1040, 925, 50, 50])
+
+        self.create_text('5', BLACK,
+                         (815, 938), pygame.font.Font('freesansbold.ttf', 22))
+        self.create_text('10', BLACK,
+                         (875, 938), pygame.font.Font('freesansbold.ttf', 22))
+        self.create_text('20', BLACK,
+                         (935, 938), pygame.font.Font('freesansbold.ttf', 22))
+        self.create_text('30', BLACK,
+                         (995, 938), pygame.font.Font('freesansbold.ttf', 22))
+        self.create_text('40', BLACK,
+                         (1055, 938), pygame.font.Font('freesansbold.ttf', 22))
+
     def draw_backgroud(self) -> None:
         self.create_rect(RED, [0, 900, 1200, 100])
         self.create_rect(BLACK, [500, 925, 200, 50])
+
+        self.handle_amount_click()
+
         self.create_text('Generoi luolasto', WHITE,
                          (512, 938), pygame.font.Font('freesansbold.ttf', 22))
         self.create_rect(BLACK, [200, 925, 200, 50])
