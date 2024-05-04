@@ -1,9 +1,9 @@
+from queue import PriorityQueue
+
+
 class Node:
-    def __init__(self, parent, position):
-        self.g = 0
-        self.h = 0
+    def __init__(self, position):
         self.f = 0
-        self.parent = parent
         self.position = position
 
     def __eq__(self, other):
@@ -12,7 +12,7 @@ class Node:
 
 class Astar:
     def __init__(self):
-        self.maze = [[3] * 900 for _ in range(1200)]
+        self.maze = [[10] * 900 for _ in range(1200)]
 
     def add_rooms_to_maze(self, room_list: list):
         """Lisää huoneisiin seinät, joiden läpi käytävät eivät voi kulkea
@@ -24,7 +24,7 @@ class Astar:
             door_1 = room.x + room.width // 2
             door_2 = room.y + room.height // 2
 
-            for i in range(room.width - 1):
+            for i in range(room.width - 10, room.width + 10):
                 if i == (room.width // 2):
                     self.maze[door_1][room.y] = 0
                     self.maze[door_1][room.y + (room.height - 1)] = 0
@@ -32,7 +32,7 @@ class Astar:
                 self.maze[room.x + i][room.y] = 100
                 self.maze[room.x + i][room.y + (room.height - 1)] = 100
 
-            for j in range(room.height):
+            for j in range(room.height - 10, room.height + 10):
                 if j == (room.height // 2):
                     self.maze[room.x][door_2] = 0
                     self.maze[room.x + (room.width - 1)][door_2] = 0
@@ -41,7 +41,7 @@ class Astar:
                 self.maze[room.x + (room.width - 1)][room.y + j] = 100
 
     def get_astar_paths(self, paths, room_list):
-        # self.add_rooms_to_maze(room_list)
+        self.add_rooms_to_maze(room_list)
         results = []
 
         for path in paths:
@@ -52,71 +52,50 @@ class Astar:
 
         return results
 
-    def run_astar(self, start, end):
-        end = Node(None, end)
-        open_list = [Node(None, start)]
-        closed_list = []
+    def run_astar(self, alku, loppu):
+        keko = PriorityQueue()
+        etaisyys = [[float('inf')] * 900 for _ in range(1200)]
+        kasitelty = [[False] * 900 for _ in range(1200)]
+        vanhemmat = {}
 
-        while True:
-            # Valitsee käsiteltävän noden, eli pienimmän f hinnan node open_list:sta
-            current_index = 0
-            for index in range(len(open_list)):
-                if open_list[index].f < open_list[current_index].f:
-                    current_index = index
+        keko.put((0, alku))
+        etaisyys[alku[0]][alku[1]] = 0
 
-            # Lisää closed_listiin ja poistaa open_listista käsiteltävän noden
-            current_node = open_list[current_index]
-            open_list.pop(current_index)
-            closed_list.append(current_node)
+        while not keko.empty():
+            solmu = keko.get()[1]
 
-            # Jos käsiteltävä node on määränpää, lisää polun karttaan ja palauttaa polun
-            if current_node == end:
+            if solmu == loppu:
                 path = []
-                while current_node:
-                    path.append(current_node.position)
-                    self.update_maze(current_node.position)
-                    current_node = current_node.parent
+                while solmu in vanhemmat:
+                    path.append(solmu)
+                    self.update_maze(solmu)
+                    solmu = vanhemmat[solmu]
+                path.append(alku)
                 return path[::-1]
 
-            children = []
-            positions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
+            if kasitelty[solmu[0]][solmu[1]]:
+                continue
 
-            # Lisää kelvolliset lapset listaan
-            for position in positions:
-                node_position = (
-                    current_node.position[0] + position[0], current_node.position[1] + position[1])
+            if self.maze[solmu[0]][solmu[1]] == 100:
+                continue
 
-                # Jos sijainti yli kartan, ei sovellu lapseksi
-                if node_position[0] > (len(self.maze) - 1) or node_position[1] > (len(self.maze[len(self.maze) - 1]) - 1):
-                    continue
+            kasitelty[solmu[0]][solmu[1]] = True
 
-                # Jos vastassa huoneen seinä, ei sovellu lapseksi
-                if self.maze[node_position[0]][node_position[1]] == 100:
-                    continue
+            kaaret = [(solmu[0] + 1, solmu[1]),
+                      (solmu[0] - 1, solmu[1]),
+                      (solmu[0], solmu[1] + 1),
+                      (solmu[0], solmu[1] - 1)]
 
-                children.append(Node(current_node, node_position))
-
-            # Lisää halvat lapset open_listiin
-            for child in children:
-
-                # Jos lapsi on jo käsitelty, siirry seuraavaan lapseen
-                for closed_child in closed_list:
-                    if child == closed_child:
-                        continue
-
-                # Päivitä g, h, f hinnat
-                child.g = current_node.g + \
-                    self.maze[child.position[0]][child.position[1]]
-                child.h = ((child.position[0] - end.position[0]) ** 2) + (
-                    (child.position[1] - end.position[1]) ** 2)
-                child.f = child.g + child.h
-
-                # Jos lapsi on jo open_listissa ja se on kalliimpi, siirry seuraavaan lapseen
-                for open_node in open_list:
-                    if child == open_node and child.g > open_node.g:
-                        continue
-
-                open_list.append(child)
+            for kaari in kaaret:
+                nyky = etaisyys[kaari[0]][kaari[1]]
+                uusi = etaisyys[solmu[0]][solmu[1]] + \
+                    self.maze[kaari[0]][kaari[1]]
+                if uusi < nyky:
+                    etaisyys[kaari[0]][kaari[1]] = uusi
+                    uusi += (kaari[0] - loppu[0]) ** 2 + \
+                        (kaari[1] - loppu[1]) ** 2
+                    keko.put((uusi, kaari))
+                    vanhemmat[kaari] = solmu
 
     def update_maze(self, pos):
         self.maze[pos[0]][pos[1]] = 0
@@ -151,6 +130,7 @@ if __name__ == "__main__":
     paths = [[room_1, room_2]]
     results = astar.get_astar_paths(paths, rooms)
 
+    print(results)
     for i in results:
         print()
         print(len(i))
