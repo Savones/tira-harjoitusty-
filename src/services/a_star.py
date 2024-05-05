@@ -3,7 +3,7 @@ from queue import PriorityQueue
 
 class Astar:
     def __init__(self):
-        self.maze = [[50] * 900 for _ in range(1200)]
+        self.maze = [[1] * 900 for _ in range(1200)]
 
     def add_rooms_to_maze(self, room_list: list):
         """Lisää huoneisiin seinät, joiden läpi käytävät eivät voi kulkea
@@ -20,23 +20,21 @@ class Astar:
             door_1 = x + (width // 2)
             door_2 = y + (height // 2)
 
-            # for i in range(room.width - 10, room.width + 10):
-            for i in range(width):
-                if i == (width // 2):
+            for i in range(x, x + width + 1):
+                if i == door_1:
                     self.maze[door_1][y] = 0
-                    self.maze[door_1][y + (height - 1)] = 0
+                    self.maze[door_1][y + height] = 0
                     continue
-                self.maze[x + i][y] = 100
-                self.maze[x + i][y + (height - 1)] = 100
+                self.maze[i][y] = 100
+                self.maze[i][y + height] = 100
 
-            # for j in range(room.height - 10, room.height + 10):
-            for j in range(height):
-                if j == (height // 2):
+            for j in range(y, y + height + 1):
+                if j == door_2:
                     self.maze[x][door_2] = 0
-                    self.maze[x + (width - 1)][door_2] = 0
+                    self.maze[x + width][door_2] = 0
                     continue
-                self.maze[x][y + j] = 100
-                self.maze[x + (width - 1)][y + j] = 100
+                self.maze[x][j] = 100
+                self.maze[x + width][j] = 100
 
     def get_astar_paths(self, paths, room_list):
         self.add_rooms_to_maze(room_list)
@@ -50,50 +48,50 @@ class Astar:
 
         return results
 
-    def run_astar(self, alku, loppu):
-        keko = PriorityQueue()
-        etaisyys = [[float('inf')] * 900 for _ in range(1200)]
-        kasitelty = [[False] * 900 for _ in range(1200)]
-        vanhemmat = {}
+    def run_astar(self, start, end):
+        priority_queue = PriorityQueue()
+        distance = [[float('inf')] * 900 for _ in range(1200)]
+        handled = [[False] * 900 for _ in range(1200)]
+        parents = {}
 
-        keko.put((0, alku))
-        etaisyys[alku[0]][alku[1]] = 0
+        priority_queue.put((0, start))
+        distance[start[0]][start[1]] = 0
 
-        while not keko.empty():
-            solmu = keko.get()[1]
+        while not priority_queue.empty():
+            node = priority_queue.get()[1]
 
-            if solmu == loppu:
+            if node == end:
                 path = []
-                while solmu in vanhemmat:
-                    path.append(solmu)
-                    self.update_maze(solmu)
-                    solmu = vanhemmat[solmu]
-                path.append(alku)
+                while node in parents:
+                    path.append(node)
+                    self.update_maze(node)
+                    node = parents[node]
+                path.append(start)
                 return path[::-1]
 
-            if kasitelty[solmu[0]][solmu[1]]:
+            if handled[node[0]][node[1]]:
                 continue
 
-            if self.maze[solmu[0]][solmu[1]] == 100:
+            if self.maze[node[0]][node[1]] == 100:
                 continue
 
-            kasitelty[solmu[0]][solmu[1]] = True
+            handled[node[0]][node[1]] = True
 
-            kaaret = [(solmu[0] + 1, solmu[1]),
-                      (solmu[0] - 1, solmu[1]),
-                      (solmu[0], solmu[1] + 1),
-                      (solmu[0], solmu[1] - 1)]
+            edges = [(node[0] + 1, node[1]),
+                     (node[0] - 1, node[1]),
+                     (node[0], node[1] + 1),
+                     (node[0], node[1] - 1)]
 
-            for kaari in kaaret:
-                nyky = etaisyys[kaari[0]][kaari[1]]
-                uusi = etaisyys[solmu[0]][solmu[1]] + \
-                    self.maze[kaari[0]][kaari[1]]
-                if uusi < nyky:
-                    etaisyys[kaari[0]][kaari[1]] = uusi
-                    uusi += (kaari[0] - loppu[0]) ** 2 + \
-                        (kaari[1] - loppu[1]) ** 2
-                    keko.put((uusi, kaari))
-                    vanhemmat[kaari] = solmu
+            for edge in edges:
+                current = distance[edge[0]][edge[1]]
+                new = distance[node[0]][node[1]] + \
+                    self.maze[edge[0]][edge[1]]
+                if new < current:
+                    distance[edge[0]][edge[1]] = new
+                    new += (edge[0] - end[0]) ** 2 + \
+                        (edge[1] - end[1]) ** 2
+                    priority_queue.put((new, edge))
+                    parents[edge] = node
 
     def update_maze(self, pos):
         self.maze[pos[0]][pos[1]] = 0
