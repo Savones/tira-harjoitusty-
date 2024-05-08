@@ -172,7 +172,7 @@ class UI:
         for path in self.a_star_paths:
             for point in path:
                 self.create_rect(
-                    RED, [point[0], point[1], 5, 5])
+                    RED, [point[0] - 3, point[1] - 3, 6, 6])
 
     def draw_amount_buttons(self):
         self.create_rect(WHITE, [800, 925, 50, 50])
