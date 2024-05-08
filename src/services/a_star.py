@@ -1,57 +1,105 @@
+import math
 from queue import PriorityQueue
 
 
 class Astar:
-    def __init__(self):
-        self.maze = [[1] * 900 for _ in range(1200)]
+    """Etsii huoneiden välille reitit A* algoritmilla
+    """
+
+    def __init__(self) -> None:
+        self.maze = [[30] * 900 for _ in range(1200)]
+        self.edges = {}
 
     def add_rooms_to_maze(self, room_list: list):
-        """Lisää huoneisiin seinät, joiden läpi käytävät eivät voi kulkea
+        """Lisää huoneisiin seinät ja ovet
 
         Args:
             room_list (list): Huoneet listana
         """
+
         for room in room_list:
-            width = room.width
-            height = room.height
-            x = room.x
-            y = room.y
+            width = room.width + 40
+            height = room.height + 40
+            x = room.x - 20
+            y = room.y - 20
 
             door_1 = x + (width // 2)
             door_2 = y + (height // 2)
 
             for i in range(x, x + width + 1):
                 if i == door_1:
-                    self.maze[door_1][y] = 0
-                    self.maze[door_1][y + height] = 0
+                    self.maze[door_1][y] = 1
+                    self.maze[door_1][y + height] = 1
                     continue
                 self.maze[i][y] = 100
                 self.maze[i][y + height] = 100
 
             for j in range(y, y + height + 1):
                 if j == door_2:
-                    self.maze[x][door_2] = 0
-                    self.maze[x + width][door_2] = 0
+                    self.maze[x][door_2] = 1
+                    self.maze[x + width][door_2] = 1
                     continue
                 self.maze[x][j] = 100
                 self.maze[x + width][j] = 100
 
-    def get_astar_paths(self, paths, room_list):
+    def make_edge_list(self) -> None:
+        """Tekee kaarilistan solmujen naapureista
+        """
+
+        for i in range(1200):
+            for j in range(900):
+                self.edges[(i, j)] = []
+                jj = j - 1
+                if 0 < jj < 900:
+                    self.edges[(i, j)].append((i, jj, self.maze[i][jj]))
+
+                jj = j + 1
+                if 0 < jj < 900:
+                    self.edges[(i, j)].append((i, jj, self.maze[i][jj]))
+
+                ii = i - 1
+                if 0 < ii < 1200:
+                    self.edges[(i, j)].append((ii, j, self.maze[ii][j]))
+
+                ii = i + 1
+                if 0 < ii < 1200:
+                    self.edges[(i, j)].append((ii, j, self.maze[ii][j]))
+
+    def get_astar_paths(self, paths: list, room_list: list) -> list:
+        """Käy läpi A* algoritmin jokaisen käytävän päätepisteille
+
+        Args:
+            paths (list): lista kahdesta huoneesta koostuvia tupleja
+            room_list (list): lista kaikista huone olioista
+
+        Returns:
+            list: lista listoja tupleista, jotka kuvaavat A* reittiä
+        """
+
         self.add_rooms_to_maze(room_list)
+        self.make_edge_list()
         results = []
 
         for path in paths:
-            start = path[0].vertex
-            end = path[1].vertex
-
-            results.append(self.run_astar(start, end))
+            doors = self.choose_door(path[0], path[1])
+            results.append(self.run_astar(doors[0], doors[1]))
 
         return results
 
-    def run_astar(self, start, end):
+    def run_astar(self, start: tuple, end: tuple) -> list:
+        """Etsii reitin alkupisteestä päätepisteeseen
+
+        Args:
+            start (tuple): (x, y) koordinaatti alkupisteelle
+            end (tuple): (x, y) koordinaatti päätepisteelle
+
+        Returns:
+            list: lista tupleja, jotka kuvaavat reittiä alusta loppuun
+        """
+
         priority_queue = PriorityQueue()
         distance = [[float('inf')] * 900 for _ in range(1200)]
-        handled = [[False] * 900 for _ in range(1200)]
+        visited = [[False] * 900 for _ in range(1200)]
         parents = {}
 
         priority_queue.put((0, start))
@@ -69,64 +117,72 @@ class Astar:
                 path.append(start)
                 return path[::-1]
 
-            if handled[node[0]][node[1]]:
+            if visited[node[0]][node[1]]:
                 continue
+
+            visited[node[0]][node[1]] = True
 
             if self.maze[node[0]][node[1]] == 100:
                 continue
 
-            handled[node[0]][node[1]] = True
-
-            edges = [(node[0] + 1, node[1]),
-                     (node[0] - 1, node[1]),
-                     (node[0], node[1] + 1),
-                     (node[0], node[1] - 1)]
-
-            for edge in edges:
+            for edge in self.edges[node]:
                 current = distance[edge[0]][edge[1]]
-                new = distance[node[0]][node[1]] + \
-                    self.maze[edge[0]][edge[1]]
+                new = distance[node[0]][node[1]] + edge[2]
                 if new < current:
                     distance[edge[0]][edge[1]] = new
-                    new += (edge[0] - end[0]) ** 2 + \
-                        (edge[1] - end[1]) ** 2
-                    priority_queue.put((new, edge))
-                    parents[edge] = node
+                    new += abs(edge[0] - end[0]) + abs(edge[1] - end[1])
+                    priority_queue.put((new, (edge[0], edge[1])))
+                    parents[(edge[0], edge[1])] = node
 
-    def update_maze(self, pos):
-        self.maze[pos[0]][pos[1]] = 0
+    def update_maze(self, pos: tuple) -> None:
+        """Päivittää solmun painon, kun solmu on polussa
 
+        Args:
+            pos (tuple): (x, y) koordinaatti solmulle
+        """
 
-class Room:
-    """Huonetta kuvaava luokka
+        self.maze[pos[0]][pos[1]] = 1
 
-    Attributes:
-            x (int): Huoneen vasemmanpuolimmaisin x-koordinaatti
-            y (int): Huoneen ylin y-koordinaatti
-            width (int): Huoneen leveys
-            height (int): Huoneen korkeus
-    """
+    def choose_door(self, start_room, end_room) -> tuple:
+        """Valitsee kahdesta huoneesta ovet, jotka ovat lähimpänä toisiaan
 
-    def __init__(self, x: int, y: int, width: int, height: int) -> None:
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
-        self.vertex = (x + (width // 2), (y + (height // 2)))
+        Args:
+            start_room (Room): toinen huoneista
+            end_room (Room): toinen huoneista
 
-    def __str__(self):
-        return f"{self.x}, {self.y}, {self.width}, {self.height}"
+        Returns:
+            tuple: tuple tupleja, jotka kuvaavat huoneiden ovien koordinaatteja
+        """
 
+        start_doors = self.get_doors(start_room)
+        end_doors = self.get_doors(end_room)
+        min_distance = float('inf')
+        chosen_doors = None
 
-if __name__ == "__main__":
-    astar = Astar()
-    room_1 = Room(10, 5, 5, 5)
-    room_2 = Room(1, 1, 4, 4)
-    rooms = [room_1, room_2]
-    paths = [[room_1, room_2]]
-    results = astar.get_astar_paths(paths, rooms)
+        for start_door in start_doors:
+            for end_door in end_doors:
+                distance = math.sqrt(
+                    (start_door[0] - end_door[0]) ** 2 + (start_door[1] - end_door[1]) ** 2)
+                if distance < min_distance:
+                    min_distance = distance
+                    chosen_doors = (start_door, end_door)
 
-    print(results)
-    for i in results:
-        print()
-        print(len(i))
+        return chosen_doors
+
+    def get_doors(self, room) -> list:
+        """Laskee huoneen ovien sijainnit
+
+        Args:
+            room (Room): Huone, jonka ovet lasketaan
+
+        Returns:
+            list: lista ovien koordinaatteja kuvaavia tupleja
+        """
+
+        doors = [(room.x + room.width // 2, room.y),
+                 (room.x + room.width //
+                  2, room.y + room.height),
+                 (room.x, room.y + room.height // 2),
+                 (room.x + room.width, room.y + room.height // 2)]
+
+        return doors
