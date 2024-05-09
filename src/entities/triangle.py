@@ -10,7 +10,7 @@ class Triangle:
         vertex3: Vertex luokan olio
     """
 
-    def __init__(self, vertex1, vertex2, vertex3):
+    def __init__(self, vertex1, vertex2, vertex3) -> None:
         self.vertex1 = vertex1
         self.vertex2 = vertex2
         self.vertex3 = vertex3
@@ -24,33 +24,62 @@ class Triangle:
     def __str__(self) -> str:
         return f"{[str(t) for t in self.triangle]}"
 
-    def get_circum_center(self):
-        a = self.vertex2.y - self.vertex1.y
-        b = self.vertex1.x - self.vertex2.x
-        c = a * (self.vertex1.x) + b * (self.vertex1.y)
+    def get_circum_center(self) -> list:
+        """Selvittää kolmion ulkoympyrän keskipisteen koordinaatit
 
-        middle = [(self.vertex1.x + self.vertex2.x)//2,
-                  (self.vertex1.y + self.vertex2.y)//2]
-        c = -b * (middle[0]) + a * (middle[1])
-        a, b = -b, a
+        Returns:
+            list: keskipisteen koordinaatteja kuvaava [x, y] lista
+            """
 
-        e = self.vertex3.y - self.vertex2.y
-        f = self.vertex2.x - self.vertex3.x
-        g = e * (self.vertex2.x) + f * (self.vertex2.y)
+        y_difference_1, x_difference_1, dot_product_1 = self.do_vertex_calculations(
+            self.vertex1, self.vertex2)
 
-        middle = [(self.vertex2.x + self.vertex3.x)//2,
-                  (self.vertex2.y + self.vertex3.y)//2]
-        g = -f * (middle[0]) + e * (middle[1])
-        e, f = -f, e
+        y_difference_2, x_difference_2, dot_product_2 = self.do_vertex_calculations(
+            self.vertex2, self.vertex3)
 
-        x = (f * c - b * g)//(a * f - e * b)
-        y = (a * g - e * c)//(a * f - e * b)
+        x = (x_difference_2 * dot_product_1 - x_difference_1 *
+             dot_product_2) // (y_difference_1 * x_difference_2 - y_difference_2 * x_difference_1)
+        y = (y_difference_1 * dot_product_2 - y_difference_2 *
+             dot_product_1) // (y_difference_1 * x_difference_2 - y_difference_2 * x_difference_1)
 
         return [x, y]
 
-    def point_in_circumcircle(self, point):
-        distance = math.sqrt(
+    def do_vertex_calculations(self, vertex1, vertex2) -> tuple:
+        """Laskee kahdelle (x, y) pisteelle eri arvoja
+
+        Args:
+            vertex1 (Vertex): Toinen Vertex luokan olio
+            vertex2 (Vertex): Toinen Vertex luokan olio
+
+        Returns:
+            tuple: tuplena y- ja x-koordinaattien erotus sekä pistetulo
+        """
+        y_difference = vertex2.y - vertex1.y
+        x_difference = vertex1.x - vertex2.x
+
+        dot_product = y_difference * vertex1.x + x_difference * vertex1.y
+
+        middle_x = (vertex1.x + vertex2.x) // 2
+        middle_y = (vertex1.y + vertex2.y) // 2
+
+        dot_product = -x_difference * middle_x + y_difference * middle_y
+        y_difference, x_difference = -x_difference, y_difference
+
+        return y_difference, x_difference, dot_product
+
+    def point_in_circumcircle(self, point: tuple) -> bool:
+        """Tarkistaa, onko (x, y) piste tämän Triangle olion ulkoympyrän sisällä
+
+        Args:
+            point (tuple): pisteen (x, y) koordinaatti
+
+        Returns:
+            bool: Palauttaa True, jos piste ulkoympyrän sisällä, muuten False
+        """
+
+        point_distance = math.sqrt(
             (point[0] - self.circum_center[0])**2 + (point[1] - self.circum_center[1])**2)
-        vertex_distance = math.sqrt(
+        radius = math.sqrt(
             (self.vertex1.x - self.circum_center[0])**2 + (self.vertex1.y - self.circum_center[1])**2)
-        return distance <= vertex_distance
+
+        return point_distance <= radius
