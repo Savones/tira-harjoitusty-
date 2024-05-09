@@ -10,12 +10,17 @@ class Triangulation:
         room_vertices (list): lista huoneiden keskipisteitä
     """
 
-    def __init__(self, super_triangle, room_vertices: list):
+    def __init__(self, super_triangle, room_vertices: list) -> None:
         self.super_triangle = super_triangle
         self.room_vertices = room_vertices
         self.triangulation = [self.super_triangle]
 
     def get_triangulation(self) -> tuple:
+        """Suorittaa Bowyer-Watsonin algoritmin
+
+        Returns:
+            tuple: koko kolmiointi ja kolmiointi, josta on poistettu superkolmio
+        """
         for point in self.room_vertices:
             bad_triangles = self.get_bad_triangles(point)
             polygon = self.get_polygon(bad_triangles)
@@ -30,6 +35,15 @@ class Triangulation:
         return self.triangulation, new_triangles
 
     def get_bad_triangles(self, point: tuple) -> list:
+        """Listaa kolmiot, joiden ulkoympyrän sisällä piste on
+
+        Args:
+            point (tuple): (x, y) piste
+
+        Returns:
+            list: lista Triangle olioita
+        """
+
         bad_triangles = []
         for triangle in self.triangulation:
             if triangle.point_in_circumcircle(point):
@@ -37,6 +51,15 @@ class Triangulation:
         return bad_triangles
 
     def get_polygon(self, bad_triangles: list) -> list:
+        """ Palauttaa polygonin, joka muodostuu huonojen kolmioiden reunoista
+
+        Args:
+            bad_triangles (list): lista huonoista kolmioista
+
+        Returns:
+            list: lista, joka sisältää polygonin muodostavat reunat.
+        """
+
         polygon = []
         for triangle1 in bad_triangles:
             for edge in triangle1.edges:
@@ -54,7 +77,14 @@ class Triangulation:
                     polygon.append(edge)
         return polygon
 
-    def add_triangles(self, polygon, point):
+    def add_triangles(self, polygon: list, point: tuple) -> None:
+        """Lisää kolmiointiin uudet kolmiot pisteestä
+
+        Args:
+            polygon (list): polygonin muodostavat reunat
+            point (tuple): piste, josta uudet kolmiot muodostetaan
+        """
+
         vertex1 = Vertex(point[0], point[1])
 
         for edge in polygon:
@@ -67,7 +97,13 @@ class Triangulation:
                 self.triangulation.append(
                     Triangle(vertex1, vertex2, vertex3))
 
-    def remove_super_triangle(self):
+    def remove_super_triangle(self) -> list:
+        """ Poistaa kolmioinnista kolmiot, jotka jakavat 
+        kärkipisteen superkolmion kanssa
+
+        Returns:
+            list: lista kolmioinnin Triangle olioita
+        """
         new_triangles = []
         for triangle in self.triangulation:
             has_shared_vertex = False

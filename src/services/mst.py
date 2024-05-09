@@ -9,7 +9,7 @@ class Mst:
         triangulation (list): Lista kolmioinnin muodostavia kolmio-olioita
     """
 
-    def __init__(self, room_vertices: list, triangulation: list):
+    def __init__(self, room_vertices: list, triangulation: list) -> None:
         self.room_vertices = room_vertices
         self.triangulation = triangulation
         self.graph = []
