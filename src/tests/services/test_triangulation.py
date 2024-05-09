@@ -17,7 +17,9 @@ class TestTriangulation(unittest.TestCase):
         result = self.triangulation.get_triangulation()
         self.assertIsInstance(result, tuple)
 
-    def test_get_bad_triangles_returns_empty_list_for_point_outside_circumcircle(self):
-        point = (100, 100)
+    def test_get_bad_triangles_returns_list_with_supertriangle_only(self):
+        point = (0, 0)
         result = self.triangulation.get_bad_triangles(point)
-        self.assertEqual(len(result), 0)
+        self.assertEqual(len(result), 1)
+        self.assertEqual(
+            str(result[0]), "['-2000, 900', '599, -500', '3200, 900']")
