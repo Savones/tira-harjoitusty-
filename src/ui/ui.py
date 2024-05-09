@@ -33,6 +33,9 @@ class UI:
         self.changed_amount = ('5', FIVE_BUTTON)
 
     def start(self) -> None:
+        """Käynnistää ohjelman
+        """
+
         pygame.init()
         pygame.display.set_caption('Luolaston generointi työkalu')
         self.screen.fill(WHITE)
@@ -68,13 +71,19 @@ class UI:
             pygame.display.flip()
         pygame.quit()
 
-    def handle_amount_click(self):
+    def handle_amount_click(self) -> None:
+        """Huolehtii muutoksista, kun käyttäjä vaihtaa generoitavien huoneiden määrää
+        """
+
         self.draw_amount_buttons()
         self.create_rect(BLACK, self.changed_amount[1])
         self.create_text(self.changed_amount[0], WHITE,
                          (self.changed_amount[1][0] + 15, 938), pygame.font.Font('freesansbold.ttf', 22))
 
-    def handle_generate_click(self):
+    def handle_generate_click(self) -> None:
+        """Huolehtii generointinapin painalluksen jälkisistä toimista
+        """
+
         self.logic.reset()
         self.rooms = self.logic.generate_rooms(self.room_amount)
         self.room_vertices = self.logic.generate_room_vertices()
@@ -90,7 +99,10 @@ class UI:
         self.show_a_star_paths()
         self.show_rooms()
 
-    def handle_show_stages_click(self):
+    def handle_show_stages_click(self) -> None:
+        """Huolehtii näytä vaihteet-napin painalluksen jälkeisistä toimista
+        """
+
         self.triangles_button += 1
         if self.triangles_button == 1:
             self.background_reset()
@@ -125,56 +137,77 @@ class UI:
             self.show_rooms()
             self.triangles_button = 0
 
-    def background_reset(self):
+    def background_reset(self) -> None:
+        """Piirtää taustan uudelleen
+        """
+
         self.screen.fill(WHITE)
         self.draw_backgroud()
         self.show_rooms()
 
-    def show_chosen_edges(self):
+    def show_chosen_edges(self) -> None:
+        """Piirtää mst + arvottuja käytäviä kuvaavat suorat
+        """
+
         for edge in self.chosen_edges:
             pygame.draw.line(self.screen, ORANGE, edge[0], edge[1], 3)
 
     def show_mst(self):
+        """Piirtää mst:n käytäviä kuvaaavat suorat
+        """
+
         for edge in self.mst:
             pygame.draw.line(self.screen, RED, edge[0], edge[1], 3)
 
-    def show_rooms(self):
+    def show_rooms(self) -> None:
+        """Piirtää huoneet
+        """
+
         for room in self.rooms:
             self.create_rect(
                 GREEN, (room.x, room.y, room.width, room.height))
 
-    def show_room_vertices(self):
-        for vertex in self.room_vertices:
-            self.create_circle(BLACK, vertex, 3, 0)
-            self.create_text(str(vertex), BLACK, vertex, pygame.font.Font(
-                'freesansbold.ttf', 18))
+    def show_triangles(self) -> None:
+        """Piirtää kolmioinnin, mukaan lukien superkolmion
+        """
 
-    def show_triangles(self):
         for triangle in self.triangulation[0]:
             vertices = [(triangle.vertex1.x, triangle.vertex1.y),
                         (triangle.vertex2.x, triangle.vertex2.y),
                         (triangle.vertex3.x, triangle.vertex3.y)]
             self.create_polygon(RED, vertices, 1)
 
-    def show_triangulation(self):
+    def show_triangulation(self) -> None:
+        """Piirtää lopullisen kolmioinnin
+        """
+
         for triangle in self.triangulation[1]:
             vertices = [(triangle.vertex1.x, triangle.vertex1.y),
                         (triangle.vertex2.x, triangle.vertex2.y),
                         (triangle.vertex3.x, triangle.vertex3.y)]
             self.create_polygon(BLUE, vertices, 2)
 
-    def show_circles(self):
+    def show_circles(self) -> None:
+        """Piirtää kolmioiden ulkoympyrät
+        """
+
         for triangle in self.triangulation[0]:
             self.create_circle(
                 BLACK, triangle.circum_center, triangle.radius, 1)
 
-    def show_a_star_paths(self):
+    def show_a_star_paths(self) -> None:
+        """Piirtää A* polut
+        """
+
         for path in self.a_star_paths:
             for point in path:
                 self.create_rect(
                     RED, [point[0] - 3, point[1] - 3, 6, 6])
 
-    def draw_amount_buttons(self):
+    def draw_amount_buttons(self) -> None:
+        """Piirtää huoneiden määrä muuttavat napit
+        """
+
         self.create_rect(WHITE, [800, 925, 50, 50])
         self.create_rect(WHITE, [860, 925, 50, 50])
         self.create_rect(WHITE, [920, 925, 50, 50])
@@ -193,6 +226,9 @@ class UI:
                          (1055, 938), pygame.font.Font('freesansbold.ttf', 22))
 
     def draw_backgroud(self) -> None:
+        """Piirtää taustan
+        """
+
         self.create_rect(RED, [0, 900, 1200, 100])
         self.create_rect(BLACK, [500, 925, 200, 50])
 
