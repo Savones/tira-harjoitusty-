@@ -1,24 +1,10 @@
 # Luolaston generointi ohjelma
 
-## Asennus
+Algoritmit ja tekoäly harjoitustyö kevät 2024.
 
-Aja repon kloonauksen jälkeen seuraavat komennot:
-```
-cd tira-harjoitustyo
-```
-```
-poetry install
-```
-```
-poetry run invoke start
-```
-## Muita komentoja
-```
-poetry run invoke test
-```
-```
-poetry run invoke coverage-report
-```
-```
-poetry run invoke lint
-```
+## Dokumentaatio
+
+- [Käyttöohje](https://github.com/Savones/tira-harjoitustyo/blob/main/dokumentaatio/kayttoohje.md)
+- [Määrittelydokumentti](https://github.com/Savones/tira-harjoitustyo/blob/main/dokumentaatio/maarittely.md)
+- [Toteutusdokumentti](https://github.com/Savones/tira-harjoitustyo/blob/main/dokumentaatio/toteutusdokumentti.md)
+- [Testausdokumentti](https://github.com/Savones/tira-harjoitustyo/blob/main/dokumentaatio/testaus.md)
