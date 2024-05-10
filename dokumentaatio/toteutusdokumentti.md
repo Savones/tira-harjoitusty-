@@ -127,6 +127,11 @@ class Triangle {
 }
 
 ```
+## Aikavaativuudet
+- Bowyer-Watson algoritmi on toteutettu O(N log N) ajassa
+- Prim algoritmi toteutettu O(N^2) ajassa
+- A* algoritmi toteutettu O(b^d) ajassa
+
 ## Puutteet ja parannusehdotukset
 Ohjelman suurin kompastuskivi on luolastojen generoinnin hitaus. Tällä hetkellä generointiin menee noin 5-10 sekunttia. Hitaus johtuu Astar luokan make_edge_list metodista, jossa generoidaan 1200x900 solmulle kaarilista.
 Ohjelmaa voisi myös parantaa antamalla käyttäjälle mahdollisuuden syöttää haluamansa huoneiden määrän valmiiksi annettujen vaihtoehtojen sijaan. Lisäksi mahdollisuus ladata generointu luolasto omalle laitteelle tekisi ohjelmasta hyödyllisemmän. 
