@@ -38,9 +38,9 @@ class Triangle:
             self.vertex2, self.vertex3)
 
         x = (x_difference_2 * dot_product_1 - x_difference_1 *
-             dot_product_2) // (y_difference_1 * x_difference_2 - y_difference_2 * x_difference_1)
+             dot_product_2) / (y_difference_1 * x_difference_2 - y_difference_2 * x_difference_1)
         y = (y_difference_1 * dot_product_2 - y_difference_2 *
-             dot_product_1) // (y_difference_1 * x_difference_2 - y_difference_2 * x_difference_1)
+             dot_product_1) / (y_difference_1 * x_difference_2 - y_difference_2 * x_difference_1)
 
         return [x, y]
 
@@ -59,8 +59,8 @@ class Triangle:
 
         dot_product = y_difference * vertex1.x + x_difference * vertex1.y
 
-        middle_x = (vertex1.x + vertex2.x) // 2
-        middle_y = (vertex1.y + vertex2.y) // 2
+        middle_x = (vertex1.x + vertex2.x) / 2
+        middle_y = (vertex1.y + vertex2.y) / 2
 
         dot_product = -x_difference * middle_x + y_difference * middle_y
         y_difference, x_difference = -x_difference, y_difference
@@ -82,4 +82,4 @@ class Triangle:
         radius = math.sqrt(
             (self.vertex1.x - self.circum_center[0])**2 + (self.vertex1.y - self.circum_center[1])**2)
 
-        return point_distance <= radius
+        return point_distance < radius
