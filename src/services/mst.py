@@ -16,6 +16,11 @@ class Mst:
         self.room_amount = len(room_vertices)
 
     def get_mst(self) -> list:
+        """Etsii Prim algoritmilla lyhyimmän reitin kaikkiin huoneisiin
+
+        Returns:
+            list: lista tuple-listoja, jotka kuvaavat mistä pisteestä on käytävä mihin pisteeseen
+        """
         graph = self.create_graph()
         distance = [10000] * self.room_amount
         parent = [None] * self.room_amount
@@ -36,6 +41,16 @@ class Mst:
         return self.get_mst_edges(parent)
 
     def calculate_distance(self, vertex1, vertex2) -> float:
+        """Laskee kahden pisteen välisen etäisyyde
+
+        Args:
+            vertex1 (Vertex): pistettä kuvaava Vertex luokan olio
+            vertex2 (Vertex): pistettä kuvaava Vertex luokan olio
+
+        Returns:
+            float: etäisyys
+        """
+
         x1, y1 = vertex1.x, vertex1.y
         x2, y2 = vertex2.x, vertex2.y
         distance = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
@@ -68,6 +83,15 @@ class Mst:
         return graph
 
     def get_min_index(self, distance: list, visited: list) -> int:
+        """Etsii pienimmän etäisyyden päässä olevan pisteen, jossa ei ole käyty
+
+        Args:
+            distance (list): lista pisteiden etäisyyksiä
+            visited (list): lista, joka kertoo onko pisteessä jo vierailtu
+
+        Returns:
+            int: indeksi, joka osoittaa pienimmän etäisyyden pisteeseen
+        """
         min = 10000
         min_index = -1
         for vertex_index in range(self.room_amount):
