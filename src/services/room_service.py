@@ -36,7 +36,16 @@ class RoomService:
                 return False
         return True
 
-    def check_room_in_rect(self, room):
+    def check_room_in_rect(self, room) -> bool:
+        """Tarkistaa, onko huone ikkunan sisällä
+
+        Args:
+            room (Room): Room luokan olio
+
+        Returns:
+            bool: Palauttaa True, jos huone on ikkunan sisällä, muuten False
+        """
+
         if room.x + room.width >= 1150:
             return False
         if room.x <= 50:
@@ -48,8 +57,18 @@ class RoomService:
         return True
 
     def check_point_inside_triangle(self, point: tuple, triangle) -> bool:
-        def sign(p1, p2, p3):
-            return (p1[0] - p3[0]) * (p2[1] - p3[1]) - (p2[0] - p3[0]) * (p1[1] - p3[1])
+        """Tarkistaa, onko annettu piste annetun kolmion sisällä
+
+        Args:
+            point (tuple): (x,y) koordinaatti
+            triangle (Triangle): Triangle luokan olio
+
+        Returns:
+            bool: Palauttaa True, jos piste on kolmion sisällä, muuten False
+        """
+
+        def sign(point1, point2, point3):
+            return (point1[0] - point3[0]) * (point2[1] - point3[1]) - (point2[0] - point3[0]) * (point1[1] - point3[1])
 
         b1 = sign(point, (triangle.vertex1.x, triangle.vertex1.y),
                   (triangle.vertex2.x, triangle.vertex2.y)) < 0.0
